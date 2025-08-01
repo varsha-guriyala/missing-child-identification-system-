@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Upload Missing Case</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body {
+            background-color: #f8f9fa;
+        }
+        .container {
+            max-width: 600px;
+            margin-top: 40px;
+            background: white;
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        }
+        .alert {
+            margin-bottom: 20px;
+        }
+    </style>
+</head>
+<body>
+
+<nav class="navbar navbar-expand-lg navbar-dark bg-primary">
+    <div class="container-fluid">
+        <a class="navbar-brand" href="#">Missing Child System</a>
+        <div class="collapse navbar-collapse">
+            <ul class="navbar-nav me-auto">
+                <li class="nav-item">
+                    <a class="nav-link" href="/authority/dashboard">User Requests</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link active" href="/authority/upload">Upload Missing Case</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="/find-missing">Find Missing Child (SVM)</a>
+                </li>
+            </ul>
+            <form class="d-flex">
+                <a class="btn btn-outline-light" href="{{ url_for('logout') }}">Logout</a>
+            </form>
+        </div>
+    </div>
+</nav>
+
+<div class="container">
+    <h2 class="mb-4 text-center">Upload Missing Child Case</h2>
+
+    {% if success %}
+    <div class="alert alert-success">
+        {{ message }}
+    </div>
+    {% elif error %}
+    <div class="alert alert-danger">
+        {{ error }}
+    </div>
+    {% endif %}
+
+    <form method="POST" enctype="multipart/form-data">
+        <div class="mb-3">
+            <label class="form-label">Child Name</label>
+            <input type="text" class="form-control" name="name" value="{{ prefill_name or '' }}" required>
+        </div>
+        <div class="mb-3">
+            <label class="form-label">Address</label>
+            <input type="text" class="form-control" name="address" value="{{ prefill_address or '' }}" required>
+        </div>
+        <div class="mb-3">
+            <label class="form-label">Upload Image</label>
+            <input type="file" class="form-control" name="image" accept="image/*" required>
+        </div>
+        <div class="d-grid">
+            <button type="submit" class="btn btn-primary">Upload</button>
+        </div>
+    </form>
+</div>
+
+</body>
+</html>

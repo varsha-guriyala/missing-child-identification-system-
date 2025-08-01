@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Upload Missing Child Details</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+  <style>
+    body {
+      background-image: url('https://i.pinimg.com/736x/47/36/db/4736dbb5c001d07cd652289bce6be694.jpg');
+      background-size: cover;
+      background-repeat: no-repeat;
+      background-position: center;
+      min-height: 100vh;
+    }
+
+    .upload-container {
+      max-width: 800px;
+      margin: 40px auto;
+      padding: 30px;
+      background-color: rgba(255, 255, 255, 0.95);
+      border-radius: 15px;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+      position: relative;
+    }
+
+    .form-group { margin-bottom: 25px; }
+    .form-label { font-weight: 600; color: #333; margin-bottom: 8px; }
+
+    .form-control {
+      border-radius: 8px;
+      padding: 12px;
+      border: 1px solid #ddd;
+      transition: all 0.3s ease;
+    }
+
+    .form-control:focus {
+      border-color: rgb(0, 106, 255);
+      box-shadow: 0 0 0 0.2rem rgba(0,123,255,.25);
+    }
+
+    .btn {
+      padding: 12px 35px;
+      font-weight: 600;
+      border-radius: 8px;
+      transition: all 0.3s ease;
+    }
+
+    .btn-primary:hover, .btn-secondary:hover {
+      transform: translateY(-2px);
+    }
+
+    .image-preview {
+      margin: 20px 0;
+      text-align: center;
+      background-color: #f8f9fa;
+      padding: 20px;
+      border-radius: 8px;
+    }
+
+    .preview-img {
+      max-width: 300px;
+      max-height: 300px;
+      border-radius: 8px;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    }
+
+    .custom-file-upload {
+      display: inline-block;
+      padding: 10px 20px;
+      cursor: pointer;
+      background-color: #f8f9fa;
+      border: 1px solid #ddd;
+      border-radius: 8px;
+      transition: all 0.3s ease;
+    }
+
+    .custom-file-upload:hover {
+      background-color: #e9ecef;
+    }
+
+    .success-message, .error-message {
+      padding: 15px;
+      border-radius: 8px;
+      margin-bottom: 20px;
+      text-align: center;
+      font-weight: bold;
+    }
+
+    .success-message {
+      background-color: #d4edda;
+      color: #155724;
+    }
+
+    .error-message {
+      background-color: #f8d7da;
+      color: #721c24;
+    }
+
+    .logout-btn {
+      position: absolute;
+      top: 20px;
+      right: 20px;
+      background: none;
+      border: none;
+      color: #dc3545;
+      font-size: 16px;
+      cursor: pointer;
+      transition: color 0.3s ease;
+    }
+
+    .logout-btn:hover {
+      color: #bd2130;
+    }
+  </style>
+</head>
+<body>
+  <div class="upload-container">
+    <h2 class="text-center mb-4">Upload Missing Child Details</h2>
+
+    <button class="logout-btn" onclick="window.location.href='{{ url_for('logout') }}'">
+      <i class="fas fa-sign-out-alt"></i> Logout
+    </button>
+
+    {% if success %}
+      <div class="success-message">
+        <i class="fas fa-check-circle me-2"></i>{{ message }}
+      </div>
+    {% elif error %}
+      <div class="error-message">
+        <i class="fas fa-exclamation-circle me-2"></i>{{ error }}
+      </div>
+    {% endif %}
+
+    <form action="{{ url_for('user_upload') }}" method="POST" enctype="multipart/form-data">
+      <input type="hidden" name="submitted" value="true">
+
+      <div class="form-group">
+        <label for="child_name" class="form-label">Child's Name:</label>
+        <input type="text" name="child_name" id="child_name" class="form-control" placeholder="Enter the child's name" required>
+      </div>
+
+      <div class="form-group">
+        <label for="phone" class="form-label">Phone Number:</label>
+        <input type="tel" name="phone" id="phone" class="form-control" placeholder="Enter your phone number" value="{{ session.get('username') }}" required>
+      </div>
+
+      <div class="form-group">
+        <label for="address" class="form-label">Child's Address:</label>
+        <input type="text" name="address" id="address" class="form-control" placeholder="Enter the child's address" required>
+      </div>
+
+      <div class="form-group">
+        <label for="email" class="form-label">Email Address:</label>
+        <input type="email" name="email" id="email" class="form-control" placeholder="Enter your email address" required>
+      </div>
+
+      <div class="form-group">
+        <label for="aadhar_number" class="form-label">Aadhar Number:</label>
+        <input type="text" name="aadhar_number" id="aadhar_number" class="form-control" placeholder="Enter your Aadhar number" maxlength="12" required>
+      </div>
+
+      <div class="form-group">
+        <label for="image" class="form-label">Child's Image:</label>
+        <div class="d-flex flex-column align-items-center">
+          <label for="image" class="custom-file-upload">
+            <i class="fas fa-upload me-2"></i> Choose Image
+          </label>
+          <input type="file" name="image" id="image" class="form-control d-none" accept="image/*" required>
+
+          <div class="image-preview mt-3" id="imagePreview">
+            <p class="text-muted">Preview will appear here after selecting an image</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="form-actions text-center mt-4">
+        <button type="submit" class="btn btn-primary me-3">
+          <i class="fas fa-upload me-2"></i> Upload
+        </button>
+        <button type="button" onclick="redirectToIndex()" class="btn btn-secondary">
+          <i class="fas fa-times me-2"></i> Cancel
+        </button>
+      </div>
+    </form>
+  </div>
+
+  <script>
+    document.getElementById('image').addEventListener('change', previewImage);
+
+    function previewImage() {
+      const fileInput = document.getElementById('image');
+      const preview = document.getElementById('imagePreview');
+
+      if (fileInput.files && fileInput.files[0]) {
+        const reader = new FileReader();
+        reader.onload = function (e) {
+          preview.innerHTML = `
+            <div class="d-flex flex-column align-items-center">
+              <img src="${e.target.result}" class="preview-img" alt="Preview">
+              <p class="mt-2 text-muted">${fileInput.files[0].name}</p>
+            </div>
+          `;
+        };
+        reader.readAsDataURL(fileInput.files[0]);
+      }
+    }
+
+    function redirectToIndex() {
+      window.location.href = "{{ url_for('index') }}";
+    }
+  </script>
+</body>
+</html>
